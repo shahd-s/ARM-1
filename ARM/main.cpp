@@ -1,4 +1,3 @@
-@@ -1,15 +1,513 @@
 #include<iostream>
 #include<cmath>
 
@@ -491,25 +490,3 @@ void simulate (unsigned short meow)
     }
     
 }
-
-//
-//  main.cpp
-//  ARM
-//case 4:
-//    //
-//    break;
-//
-//  Created by Mohamed Shahawy on 4/15/16.
-//  Copyright © 2016 Mohamed Shahawy. All rights reserved.
-//case 5:
-//    //
-//    break;
-//case 7:
-//    break;
-//case 8:
-//    break;
-//
-//case 9:
-//    break;
-//
-//    }
