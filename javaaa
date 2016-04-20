@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Shahd</title>
+	</head>
+	<body>
+		<script>
+			var Regs = [];
+			var Memory = [];
+			 var meow = 0b0100000000000000;
+			 simulate(meow);
+
+			 document.write(Regs[0]);
+
+
+function simulate (meow)
+{
+    var hi = meow >> 13;
+    switch (hi)
+    {
+    	  case 1:
+        { //format 3
+            var offset =  (meow & 0b0000000011111111);
+            var Rd =   ((meow >> 8) & 0b0000000000000111);
+            switch ((meow >> 11) & 0b0000000000000011) { //the 2 op code bits
+                case 0:
+                {document.write( "MOV R" , Rd ,", #", offset ); document.write("<br>");
+                    Regs[Rd] = offset;
+                    //REGS[15]++?
+                    
+                }
+                    break;
+                case 1:
+                {document.write( "CMP R" , Rd ,", #", offset ); document.write("<br>");
+                    if (Regs[Rd] - offset == 0)
+                        Z = 1 ;
+                    else
+                        Z =  0 ;
+                    if (Regs[Rd] - offset < 0) {
+                        N =  1 ;
+                    }
+                    else
+                        N =  0 ;
+                    
+                    if (Regs[Rd] - offset > Regs[Rd] | offset) {
+                        C =  1 ;
+                    }
+                    else
+                        C =  0 ;
+                     
+                    
+                }
+                    break;
+                case 2:
+                {document.write( "ADD R" , Rd ,", #", offset ); document.write("<br>");
+                    Regs[Rd]+= offset;
+                    //Regs[15]?
+                }
+                    break;
+                case 3:
+                {document.write( "SUB R" , Rd ,", #", offset ); document.write("<br>");
+                    
+                    Regs[Rd] -=offset;
+                    //REGS[15]?
+                }
+                    break;
+                    
+            }
+        }
+            break;
+        
+        //end of case 1 
+
+        case 2:{
+            
+            switch (meow >> 11 & 0b0000000000000011 ) { //now we have the two bits after the 3 bits that tell us we re in case 2.
+                case 0:
+                    if ((meow >> 10 & 0b0000000000000001)== 0) { //format 4
+                        var Rd =   meow & 0b0000000000000111;
+                        var Rs =   meow >>3 &0b0000000000000111;
+                        switch (meow >> 6 & 0b0000000000001111) {
+                                
+                            case 0:
+                            {
+                                document.write("AND R" , Rd , ", R" , Rs); document.write("<br>");
+                                Regs[Rd] &= Regs[Rs];
+                                //REGS[15]?
+                                
+                            }
+                                break;
+                            case 1:
+                            { document.write("EOR R" , Rd , ", R" , Rs); document.write("<br>");
+                                Regs[Rd] ^=Regs[Rs];
+                                //Regs[15]?
+                            }
+                                break;
+                            case 2:
+                            {document.write("LSL R" , Rd , ", R" , Rs); document.write("<br>");
+                                Regs[Rd] <<=Regs[Rs];
+                                //Regs[15]?
+                                
+                            }
+                                break;
+                            case 3:
+                            {document.write("LSR R" , Rd , ", R" , Rs); document.write("<br>");
+                                Regs[Rd] >>= Regs[Rs];
+                                //REGS[15]?
+                            }
+                                break;
+                            case 4:
+                            {document.write("ASR R" , Rd , ", R" , Rs); document.write("<br>");
+                                
+                                if (Regs[Rd] >> 32 == 1) {
+                                    Regs[Rd] |=0b11111111111111111111111111111111;
+                                }
+                                else
+                                    Regs[Rd] >>=Regs[Rs];
+                                
+                                //how am I supposed ot do an arithmatic shift?
+                            }
+                                break;
+                            case 5:
+                            {document.write("ADC R" , Rd , ", R" , Rs); document.write("<br>");
+                                
+                                if (Regs[Rd] + Regs[Rs] < Regs[Rd] | Regs[Rs]) {
+                                   
+                                    C =  1 ;
+                                }
+                                else
+                                    C =  0 ;
+                                Regs[Rd]+=Regs[Rs];
+                                
+                                
+                                
+                            }
+                                break;
+                            case 6:
+                            { document.write("SBC R" , Rd , ", R" , Rs); document.write("<br>");
+                                if (Regs[Rd] - Regs[Rs] > Regs[Rd] | Regs[Rs]) {
+                                    
+                                    C =  1 ;
+                                }
+                                else
+                                    C =  0 ;
+                                Regs[Rd]-=Regs[Rs];
+
+                            }
+                                break;
+                            case 7:
+                            {  document.write("ROR R" , Rd , ", R" , Rs); document.write("<br>");
+                                var i;
+                                while (i< 16){
+                                if ((Regs[Rd] >> 32) == 1) {
+                                         Regs[Rd] <<= 1;
+                                         Regs[Rd] +=1;
+                                }
+                                         else
+                                         {
+                                         Regs[Rd] <<= 1;
+                                         
+                                    
+                                         }i++;
+                                }
+                                
+                            }
+                                break;
+                            case 8:
+                            {document.write("TST R" , Rd , ", R" , Rs); document.write("<br>");
+                                //shoud i really update the condition flags?
+                                
+                            }
+                                break;
+                            case 9:
+                            {document.write("NEG R" , Rd , ", R" , Rs); document.write("<br>");
+                                
+                                Regs[Rd] = -1 * Regs[Rs];
+                                //Regs[15]?
+                                
+                            }
+                                break;
+                            case 10:
+                            {document.write("CMP R" , Rd , ", R" , Rs); document.write("<br>");
+                                if (Regs[Rd] - Regs[Rs] == 0)
+                                    Z = 1 ;
+                                else
+                                    Z =  0 ;
+                                if (Regs[Rd] - Regs[Rs] < 0) {
+                                    N =  1 ;
+                                }
+                                else
+                                    N =  0 ;
+                                
+                                if (Regs[Rd] - Regs[Rs] > Regs[Rd] | Regs[Rs]) {
+                                    C =  1 ;
+                                }
+                                else
+                                    C =  0 ;
+                                //Regs[15]?
+
+                            }
+                                break;
+                            case 11:
+                            { document.write("CMN R" , Rd , ", R" , Rs); document.write("<br>");
+                                if (Regs[Rs] - Regs[Rd] == 0)
+                                    Z = 1 ;
+                                else
+                                    Z =  0 ;
+                                if (Regs[Rs] - Regs[Rd] < 0) {
+                                    N =  1 ;
+                                }
+                                else
+                                    N =  0 ;
+                                
+                                if (Regs[Rs] - Regs[Rd] > Regs[Rd] | Regs[Rs]) {
+                                    C =  1 ;
+                                }
+                                else
+                                    C =  0 ;
+                                //Regs[15]?
+
+                            }
+                                break;
+                            case 12:
+                            {document.write("ORR R" , Rd , ", R" , Rs); document.write("<br>");
+                                Regs[Rd] |= Regs[Rs];
+                                //Regs[15]
+                            }
+                                break;
+                            case 13:
+                            {document.write("MUL R" , Rd , ", R" , Rs); document.write("<br>");
+                                Regs[Rd] *= Regs[Rs];
+                                //REGS[15]
+                            }
+                                break;
+                            case 14:
+                            {document.write("BIC R" , Rd , ", R" , Rs); document.write("<br>");
+                                Regs[Rd] = Regs[Rd] & (~Regs[Rs]);
+                                //Regs[15]?
+                            }
+                                break;
+                            case 15:
+                            {document.write("MVN R" , Rd , ", R" , Rs); document.write("<br>");
+                                Regs[Rd] = ~Regs[Rs];
+                            }
+                                break;
+                                
+                        }
+                    }
+                    else
+                    {   //format 5
+                        var Rd,Hd, Rs, Hs;
+                        Rd  =   meow & 0b0000000000000111;
+                        Hd = Rd + 8;
+                        Rs =   meow >> 3 &0b0000000000000111;
+                        Hs = Rs +8;
+                        
+                        switch (meow >> 6 & 0b0000000000001111) {
+                                
+                                
+                            case 1:
+                            {document.write("ADD R", Rd,  ", R", Hs); document.write("<br>");
+                                
+                                Regs[Rd] += Regs[Hs];
+                                
+                            } break; //rd, hs
+                            case 2:
+                            {document.write( "ADD R", Hd ,", R", Rs); document.write("<br>");
+                                
+                                Regs[Hd] += Regs[Rs];
+                            } break; //hd, rs
+                            case 3:
+                            {document.write( "Add R", Hd, ", R", Hs); document.write("<br>");
+                                Regs[Hd] += Regs[Hs];
+                                
+                            }break; //Hd, Hs
+                            case 5://says i shouldln t update for format 5
+                                document.write( "CMP R", Rd ,", R", Hs); document.write("<br>"); //Rd, Hs
+                            case 6:
+                                document.write( "CMP R", Hd ,", R", Rs); document.write("<br>");// CMP Hd, Rs
+                                break;
+                            case 7:
+                                document.write( "CMP R", Hd ,", R", Hs); document.write("<br>");//CMP Hd, Hs
+                                break;
+                            case 9:
+                            {document.write( "MOV R", Rd ,", R", Hs); document.write("<br>");
+                                Regs[Rd] = Regs[Hs];
+                                
+                            }//MOV Rd, Hs
+                                break;
+                            case 10:
+                            {document.write( "MOV R", Hd ,", R", Rs); document.write("<br>");
+                                Regs[Hd] = Regs[Rs];
+                                
+                            }//Mod Hd, Rs
+                                break;
+                            case 11:
+                            {document.write( "MOV R", Hd ,", R", Hs); document.write("<br>");
+                                Regs[Hd] = Regs[Hs];
+                            }//Mod Hd, Hs
+                                break;
+                            case 12:
+                            {document.write( "BX R", Rs); document.write("<br>");
+                                Regs[15] = Regs[Rs];
+                            }
+                                break;
+                            case 13:
+                            { document.write( "Bx R", Hs); document.write("<br>");
+                                if (Hs == 15)
+                                    if (Regs[15] % 4 !=0) {
+                                        document.write( "you are branching to the REGS[15], from a non word aligned address, therefore the execution will be unpredictable"); 
+                                        document.write("<br>");
+                                        Regs[15]= (Regs[15] & 0b01111111111111111111111111111111) + 4;
+                                    }
+                                    else Regs[15]= (Regs[15] & 0b01111111111111111111111111111111) + 4;
+                                
+                            }
+                                break;
+                            default:
+                                document.write( "undefined");
+                                break;
+                                break;
+                                
+                        }
+                    }
+                    break;
+                    
+                case 1: //format 6
+                {
+                    var imm = meow & 0b0000000011111111;
+                    imm = imm<<2;
+                    var Rd =   meow >> 8 & 0b0000000000000111;
+                    
+                    document.write( "LDR R", Rd ,", [REGS[15], #", imm ,"]"); document.write("<br>");
+                    Regs[Rd] = Memory[imm+Regs[15]];
+                    
+                }
+                    
+                    break;
+                default:
+                    if ((meow >> 9 & 0b0000000000000001) == 0)
+                    { // format 7
+                        var Rd, Ro, Rb;
+                        Rd = meow & 0b0000000000000111;
+                        Rb = meow >> 3 &0b0000000000000111;
+                        Ro = meow >> 6 &0b0000000000000111;
+                        switch (meow >> 10 & 0b0000000000000011) {
+                            case 0:
+                            {document.write( "STR R", Rd ,", [R", Rb ,", R", Ro ,"]"); document.write("<br>");
+                                Memory[Regs[Rb] + Regs[Ro]] = Regs[Rd];
+                            }
+                                break;
+                            case 1:
+                            {document.write( "STRB R", Rd ,", [R", Rb ,", R", Ro ,"]"); document.write("<br>");
+                                Memory[Regs[Rb] + Regs[Ro]] = Regs[Rd];
+                                
+                            }
+                                break;
+                            case 2:
+                            {document.write( "LDR R", Rd ,", [R", Rb ,", R", Ro ,"]"); document.write("<br>");
+                                Regs[Rd] = Memory[Regs[Rb] + Regs[Ro]];
+                                
+                            }
+                                break;
+                            case 3:
+                            {document.write( "LDRB R", Rd ,", [R", Rb ,", R", Ro ,"]"); document.write("<br>");
+                                Regs[Rd] = Memory[Regs[Rb] + Regs[Ro]];
+                            }
+                                break;
+                                
+                        }
+                    }
+                    else //format 8
+                    {
+                        var Rd, Ro, Rb;
+                        Rd = meow & 0b0000000000000111;
+                        Rb = meow >> 3 &0b0000000000000111;
+                        Ro = meow >> 6 &0b0000000000000111;
+                        switch (meow >> 10 & 0b0000000000000011) {
+                            case 0:
+                                document.write( "STRH R", Rd ,", [R", Rb ,", R", Ro ,"]"); document.write("<br>");
+                                break;
+                            case 1:
+                                document.write( "LDSB R", Rd ,", [R", Rb ,", R", Ro ,"]"); 
+                                document.write("<br>");
+                                break;
+                            case 2:
+                                document.write( "LDRH R", Rd ,", [R", Rb ,", R", Ro ,"]"); document.write("<br>");
+                                break;
+                            case 3:
+                                document.write( "LDSH R", Rd ,", [R", Rb ,", R", Ro ,"]"); document.write("<br>");
+                                break;
+                                
+                        }
+                        
+                    }
+                    
+                    break;
+            }
+}
+            break;
+            
+            
+            
+            
+            
+            
+            
+        
+
+
+         case 3:
+        { //format 9 need switch on BL
+            var imm, Rd, Rb;
+            imm =   meow >> 6 &0b0000000000011111;
+            var imm_b_zero= imm << 2;
+            Rd = meow & 0b0000000000000111;
+            Rb = meow >> 3 & 0b0000000000000111;
+            switch (meow >> 11 & 0b0000000000000011){ //Switching on BL
+                case 0:{
+                    document.write( "STR R" , Rd , ", [R" , Rb , ", #", imm_b_zero ,"]"); document.write("<br>");}
+                    break;
+                case 1:{
+                    document.write( "LDR R" , Rd ,", [R" , Rb ,", #", imm_b_zero ,"]"); document.write("<br>");}
+                    break;
+                case 2:{
+                    document.write( "STRB R" , Rd ,", [R" , Rb ,", #", imm ,"]"); document.write("<br>");}
+                    break;
+                case 3:{
+                    document.write( "LDRB R" , Rd ,", [R" , Rb ,", #", imm ,"]"); document.write("<br>");}
+                    break;
+                }    
+            }
+            break;
+
+
+       }
+        
+}
+		</script>
+	</body>
+</html>
