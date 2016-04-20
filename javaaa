@@ -7,10 +7,10 @@
 		<script>
 			var Regs = [];
 			var Memory = [];
-			 var meow = 0b0100000000000000;
+			 var meow = 0b0110000000000000;
 			 simulate(meow);
 
-			 document.write(Regs[0]);
+			
 
 
 function simulate (meow)
